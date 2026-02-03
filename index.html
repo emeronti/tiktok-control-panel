@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>TikTok Booster</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="screen active">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="logo">🚀</div>
+                <h1>TikTok Booster</h1>
+                <p>Panel Remoto</p>
+            </div>
+            <form id="login-form">
+                <div class="input-group">
+                    <input type="text" id="username" placeholder="Usuario" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" placeholder="Contraseña" required>
+                </div>
+                <button type="submit" class="btn-primary">Entrar</button>
+                <p id="login-error" class="error-msg"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN PANEL -->
+    <div id="main-panel" class="screen">
+        <header class="top-bar">
+            <div class="brand">
+                <span class="logo-text">🚀 Booster</span>
+            </div>
+            <button id="logout-btn" class="btn-logout">Salir</button>
+        </header>
+
+        <main class="content">
+            <!-- 1. Nueva Tarea (PRIORIDAD) -->
+            <section class="card new-task">
+                <h2>📋 Nueva Tarea</h2>
+
+                <div class="form-compact">
+                    <div class="input-group full-width">
+                        <textarea id="task-link" rows="3"
+                            placeholder="🔗 Links de TikTok (pega varios aquí)..."></textarea>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label>Acción</label>
+                            <select id="task-action">
+                                <option value="interaccion">❤️ Likes</option>
+                                <option value="granja">🌾 Granja</option>
+                                <option value="granja_autolink">🔗 AutoLink</option>
+                                <option value="comentarios">💬 Comentar</option>
+                                <option value="share_apoyo">🔄 Share Apoyo</option>
+                                <option value="share_ataque">⚔️ Share Ataque</option>
+                                <option value="calentar">🔥 Calentar</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Dispositivos</label>
+                            <input type="number" id="task-devices" value="10" min="1" max="50">
+                        </div>
+                    </div>
+
+                    <div class="input-group full-width">
+                        <label>Duración</label>
+                        <div class="duration-options">
+                            <button type="button" class="dur-btn active" data-val="1 hora">1h</button>
+                            <button type="button" class="dur-btn" data-val="2 horas">2h</button>
+                            <button type="button" class="dur-btn" data-val="3 horas">3h</button>
+                            <button type="button" class="dur-btn" data-val="4 horas">4h</button>
+                        </div>
+                        <input type="hidden" id="task-duration" value="1 hora">
+                    </div>
+
+                    <div class="input-group full-width" id="comments-section" style="display: none;">
+                        <textarea id="task-comments" rows="3"
+                            placeholder="💬 Comentarios (uno por línea)..."></textarea>
+                        <button id="btn-ai-generate" class="btn-secondary" type="button" onclick="generarIA()">✨ Generar
+                            con IA</button>
+                    </div>
+                </div>
+
+                <button id="send-task-btn" class="btn-primary btn-large">
+                    <span>🚀 ENVIAR</span>
+                </button>
+
+                <p id="task-status" class="status-msg"></p>
+            </section>
+
+            <!-- 2. Controles Rápidos -->
+            <section class="card controls-card compact-card">
+                <div class="controls-grid">
+                    <button id="btn-unlock" class="btn-control btn-cyan">🔓 Desbloquear</button>
+                    <button id="btn-pause" class="btn-control btn-orange">⏸️ Pausar</button>
+                    <button id="btn-resume" class="btn-control btn-green">▶️ Reanudar</button>
+                    <button id="btn-stop" class="btn-control btn-red">☢️ Detener</button>
+                </div>
+            </section>
+
+            <!-- 3. Estado de Dispositivos (GRID COMPACTO) -->
+            <section class="card status-card compact-card">
+                <div class="card-header-compact">
+                    <h2>📱 Dispositivos</h2>
+                    <div class="status-counts">
+                        <span id="devices-active" class="dot-count green">0</span>
+                        <span id="devices-free" class="dot-count gray">0</span>
+                    </div>
+                </div>
+                <div id="devices-grid" class="devices-grid-compact">
+                    <!-- Se llena con JS -->
+                    <div class="device-dot loading"></div>
+                    <div class="device-dot loading"></div>
+                    <div class="device-dot loading"></div>
+                </div>
+            </section>
+
+            <!-- 4. Historial -->
+            <section class="card history compact-card">
+                <div class="card-header-compact">
+                    <h2>📜 Historial</h2>
+                    <div class="history-actions">
+                        <button id="clear-history-btn" class="btn-icon-small trash">🗑️</button>
+                        <button id="refresh-btn" class="btn-icon-small">🔄</button>
+                    </div>
+                </div>
+                <div id="history-list" class="history-list">
+                    <p class="empty-state">Cargando...</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js?v=4"></script>
+</body>
+
+</html>
