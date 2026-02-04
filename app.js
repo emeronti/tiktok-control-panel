@@ -124,11 +124,11 @@ taskAction.addEventListener('change', () => {
         });
         durationInput.value = '-'; // Valor nulo para el Sheet
     }
-    // 3. Bloquear Dispositivos si es Share (Son fijos)
+    // 3. Bloquear Dispositivos si es Share (Combo permite elegir cantidad para reacciones)
     const devicesInput = document.getElementById('task-devices');
-    const isShare = (action.includes('share'));
+    const isSharePuro = (action === 'share_apoyo' || action === 'share_ataque');
 
-    if (isShare) {
+    if (isSharePuro) {
         devicesInput.value = '';
         devicesInput.placeholder = 'Predefinidos';
         devicesInput.disabled = true;
@@ -136,6 +136,17 @@ taskAction.addEventListener('change', () => {
         devicesInput.disabled = false;
         if (!devicesInput.value) devicesInput.value = '10';
         devicesInput.placeholder = '';
+    }
+
+    // 4. Bloquear Link si es Calentar
+    const linkInput = document.getElementById('task-link');
+    if (action === 'calentar') {
+        linkInput.value = '';
+        linkInput.placeholder = 'No necesario para calentar';
+        linkInput.disabled = true;
+    } else {
+        linkInput.disabled = false;
+        linkInput.placeholder = '🔗 Links de TikTok (pega varios aquí)...';
     }
 });
 
