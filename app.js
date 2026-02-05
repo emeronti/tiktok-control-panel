@@ -252,7 +252,10 @@ async function loadHistory() {
                         <div class="action">${getActionEmoji(item.accion)} ${item.accion.replace('comando_', '')}</div>
                         <div class="link" onclick="copyToClipboard('${item.link}')">${item.link}</div>
                     </div>
-                    <span class="status-icon" title="${item.estado}">${getStatusIcon(item.estado)}</span>
+                    <div class="actions">
+                         ${item.link !== 'CMD' ? `<button class="btn-veto" onclick="vetarLink('${item.link}')" title="Vetar del Automático">🚫</button>` : ''}
+                         <span class="status-icon" title="${item.estado}">${getStatusIcon(item.estado)}</span>
+                    </div>
                 </div>
             `).join('');
         }
@@ -321,6 +324,26 @@ window.copyToClipboard = (text) => {
     navigator.clipboard.writeText(text).then(() => {
         showStatus('📋 Link copiado', 'success');
     });
+};
+
+window.vetarLink = async (url) => {
+    if (confirm(`¿Prohibir este link para el modo automático?\n${url}`)) {
+        try {
+            showStatus('🚫 Vetando...', 'running');
+            await postData({
+                link: url,
+                accion: 'veto',
+                dispositivos: '-',
+                duracion: '-',
+                comentarios: '-',
+                estado: 'Pendiente'
+            });
+            showStatus('🚫 Link Vetado OK', 'success');
+            setTimeout(loadHistory, 1500);
+        } catch (e) {
+            showStatus('❌ Error al vetar', 'error');
+        }
+    }
 };
 
 document.addEventListener('DOMContentLoaded', checkAuth);

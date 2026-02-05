@@ -410,6 +410,28 @@ label {
     cursor: text;
 }
 
+.history-item .actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-veto {
+    background: rgba(255, 23, 68, 0.1);
+    border: 1px solid rgba(255, 23, 68, 0.3);
+    color: var(--accent-red);
+    border-radius: 6px;
+    padding: 2px 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-veto:hover {
+    background: var(--accent-red);
+    color: white;
+}
+
 .status-icon {
     font-size: 18px;
 }
