@@ -275,9 +275,11 @@ async function loadHistory() {
 
                 const linkLabel = item.link.split('?')[0].slice(0, 30) + (item.link.length > 30 ? '...' : '');
 
-                // Formato de copia según pedido
-                let copyText = `${item.link} ${countStr}`;
-                if (showDur) copyText += ` ${durStr}`;
+                // Formato de copia según pedido (2 líneas)
+                const copyLink = item.link.split('?')[0].slice(0, 27) + (item.link.split('?')[0].length > 27 ? '...' : '');
+                let copyText = showDur
+                    ? `${copyLink}\n${tipoDesc} - ${countStr} - ${durStr}`
+                    : `${copyLink}\n${tipoDesc} - ${countStr}`;
 
                 return `
                 <div class="history-item">
@@ -293,7 +295,7 @@ async function loadHistory() {
                         </div>
                     </div>
                     <div class="history-actions-row">
-                        <button class="btn-copy-mini" onclick="copyToClipboard('${copyText}')">📋</button>
+                        <button class="btn-copy-mini" onclick="copyToClipboard(\`${copyText}\`)">📋</button>
                         <span class="status-icon" title="${item.estado}">${getStatusIcon(item.estado)}</span>
                     </div>
                 </div>
