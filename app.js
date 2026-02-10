@@ -275,8 +275,8 @@ async function loadHistory() {
 
                 const linkLabel = item.link.split('?')[0].slice(0, 30) + (item.link.length > 30 ? '...' : '');
 
-                // Formato de copia según pedido (2 líneas)
-                const copyLink = item.link.split('?')[0].slice(0, 27) + (item.link.split('?')[0].length > 27 ? '...' : '');
+                // Formato de copia según pedido (2 líneas) - Link completo
+                const copyLink = item.link.split('?')[0];
                 let copyText = showDur
                     ? `${copyLink}\n${tipoDesc} - ${countStr} - ${durStr}`
                     : `${copyLink}\n${tipoDesc} - ${countStr}`;
