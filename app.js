@@ -2,7 +2,8 @@
 const CONFIG = {
     USERNAME: "admin",
     PASSWORD: "booster2024",
-    APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyrNDiK1-A3KSKr8phSQS796h_jx327LacPZkdSwKSnYtQFZaOOmE-IDa1iJNnzRNnX9w/exec"
+    APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyrNDiK1-A3KSKr8phSQS796h_jx327LacPZkdSwKSnYtQFZaOOmE-IDa1iJNnzRNnX9w/exec",
+    WHATSAPP_GROUP_ID: "Il8194f4qt3LN5NkMfc3jR"
 };
 
 // ===== ELEMENTOS DOM =====
@@ -296,6 +297,7 @@ async function loadHistory() {
                     </div>
                     <div class="history-actions-row">
                         <button class="btn-copy-mini" onclick="copyToClipboard(\`${copyText}\`)">📋</button>
+                        <button class="btn-copy-mini" style="color: #25D366; border-color: rgba(37, 211, 102, 0.3);" onclick="sendRemoteWhatsapp(decodeURIComponent(\`${encodeURIComponent(copyText)}\`))">📞</button>
                         <span class="status-icon" title="${item.estado}">${getStatusIcon(item.estado)}</span>
                     </div>
                 </div>
@@ -304,6 +306,25 @@ async function loadHistory() {
         }
     } catch (e) {
         console.error(e);
+    }
+}
+
+async function sendRemoteWhatsapp(text) {
+    if (!confirm('¿Enviar reporte al grupo desde el PC Servidor?')) return;
+    try {
+        showStatus('⏳ Enviando orden...', 'running');
+        await postData({
+            link: text,
+            accion: 'whatsapp_msg',
+            dispositivos: '0',
+            duracion: '0',
+            comentarios: 'Desde Frontend Web',
+            estado: 'Pendiente'
+        });
+        showStatus('✅ Orden enviada al PC', 'success');
+    } catch (error) {
+        showStatus('❌ Error enviando orden', 'error');
+        alert('Error conectando con Sheets: ' + error);
     }
 }
 
