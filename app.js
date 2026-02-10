@@ -265,7 +265,7 @@ async function loadHistory() {
                 } else if (action.includes('comentarios')) {
                     tipoDesc = `${item.dispositivos || '?'} comentarios`;
                 } else if (action.includes('granja')) {
-                    tipoDesc = "Loop";
+                    tipoDesc = "Granja";
                     showDur = true;
                 } else if (action.includes('calentar')) {
                     tipoDesc = "Loop FYP";
