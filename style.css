@@ -380,34 +380,72 @@ label {
     margin-bottom: 8px;
 }
 
+/* Link Seleccionable */
+.history-item {
+    gap: 12px;
+}
+
+.history-icon {
+    font-size: 20px;
+}
+
 .history-item .info {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    flex: 1;
-    padding-right: 10px;
+    overflow: hidden;
 }
 
-.history-item .action {
-    font-size: 12px;
-    font-weight: 700;
-    color: white;
+.action-row {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 6px;
+    margin-bottom: 2px;
 }
 
-/* Link Seleccionable */
-.history-item .link {
+.action-name {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.action-details {
+    font-size: 9px;
+    color: var(--accent-cyan);
+    font-weight: 600;
+}
+
+.link-text {
     font-size: 10px;
     color: var(--text-secondary);
-    max-width: 100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    user-select: text;
-    -webkit-user-select: text;
-    cursor: text;
+    display: block;
+}
+
+.history-actions-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-copy-mini {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btn-copy-mini:active {
+    background: var(--border);
 }
 
 .status-icon {

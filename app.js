@@ -126,7 +126,7 @@ taskAction.addEventListener('change', () => {
     }
     // 3. Bloquear Dispositivos si es Share (Combo permite elegir cantidad para reacciones)
     const devicesInput = document.getElementById('task-devices');
-    const isSharePuro = (action === 'share_apoyo' || action === 'share_ataque');
+    const isSharePuro = (action === 'share_apoyo' || action === 'share_ataque' || action === 'share_noticiero');
 
     if (isSharePuro) {
         devicesInput.value = '';
@@ -246,15 +246,32 @@ async function loadHistory() {
         const response = await fetch(CONFIG.APPS_SCRIPT_URL + '?action=getHistory');
         const data = await response.json();
         if (data && data.length > 0) {
-            historyList.innerHTML = data.reverse().slice(0, 15).map(item => `
+            historyList.innerHTML = data.reverse().slice(0, 20).map(item => {
+                const icon = getActionEmoji(item.accion);
+                const countStr = item.dispositivos ? `${item.dispositivos}C` : '?C';
+                const durStr = item.duracion && item.duracion !== '-' ? item.duracion.replace(' horas', 'H').replace(' hora', 'H').toUpperCase() : '1H';
+                const linkLabel = item.link.split('?')[0].slice(0, 30) + (item.link.length > 30 ? '...' : '');
+                const copyText = `${item.link} ${countStr} ${durStr}`;
+
+                return `
                 <div class="history-item">
+                    <div class="history-icon">${icon}</div>
                     <div class="info">
-                        <div class="action">${getActionEmoji(item.accion)} ${item.accion.replace('comando_', '')}</div>
-                        <div class="link" onclick="copyToClipboard('${item.link}')">${item.link}</div>
+                        <div class="action-row">
+                            <span class="action-name">${item.accion.replace('comando_', '').toUpperCase()}</span>
+                            <span class="action-details">📱 ${countStr} | ⏱️ ${durStr}</span>
+                        </div>
+                        <div class="link-row">
+                            <span class="link-text" onclick="copyToClipboard('${item.link}')">${linkLabel}</span>
+                        </div>
                     </div>
-                    <span class="status-icon" title="${item.estado}">${getStatusIcon(item.estado)}</span>
+                    <div class="history-actions-row">
+                        <button class="btn-copy-mini" onclick="copyToClipboard('${copyText}')">📋</button>
+                        <span class="status-icon" title="${item.estado}">${getStatusIcon(item.estado)}</span>
+                    </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
         }
     } catch (e) {
         console.error(e);
@@ -308,10 +325,14 @@ function getStatusIcon(st) {
 }
 
 function getActionEmoji(a) {
+    if (a.includes('combo')) return '🥊';
+    if (a.includes('share')) return '🔄';
     if (a.includes('interaccion')) return '❤️';
     if (a.includes('granja')) return '🌾';
     if (a.includes('calentar')) return '🔥';
+    if (a.includes('comentarios')) return '💬';
     if (a.includes('comando')) return '⚡';
+    if (a.includes('noticiero')) return '📡';
     return '📱';
 }
 
