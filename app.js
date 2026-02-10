@@ -247,22 +247,49 @@ async function loadHistory() {
         const data = await response.json();
         if (data && data.length > 0) {
             historyList.innerHTML = data.reverse().slice(0, 20).map(item => {
-                const icon = getActionEmoji(item.accion);
+                const action = item.accion.toLowerCase();
+                const icon = getActionEmoji(action);
                 const countStr = item.dispositivos ? `${item.dispositivos}C` : '?C';
                 const durStr = item.duracion && item.duracion !== '-' ? item.duracion.replace(' horas', 'H').replace(' hora', 'H').toUpperCase() : '1H';
+
+                let tipoDesc = "";
+                let showDur = false;
+
+                if (action.includes('combo')) {
+                    tipoDesc = "Share, repost, guardado y Like";
+                } else if (action.includes('share')) {
+                    tipoDesc = "Share";
+                } else if (action.includes('interaccion') || action.includes('likes')) {
+                    tipoDesc = "repost, guardado y Like";
+                } else if (action.includes('comentarios')) {
+                    tipoDesc = `${item.dispositivos || '?'} comentarios`;
+                } else if (action.includes('granja')) {
+                    tipoDesc = "Loop";
+                    showDur = true;
+                } else if (action.includes('calentar')) {
+                    tipoDesc = "Loop FYP";
+                    showDur = true;
+                } else {
+                    tipoDesc = action.toUpperCase();
+                }
+
                 const linkLabel = item.link.split('?')[0].slice(0, 30) + (item.link.length > 30 ? '...' : '');
-                const copyText = `${item.link} ${countStr} ${durStr}`;
+
+                // Formato de copia según pedido
+                let copyText = `${item.link} ${countStr}`;
+                if (showDur) copyText += ` ${durStr}`;
 
                 return `
                 <div class="history-item">
                     <div class="history-icon">${icon}</div>
                     <div class="info">
                         <div class="action-row">
-                            <span class="action-name">${item.accion.replace('comando_', '').toUpperCase()}</span>
-                            <span class="action-details">📱 ${countStr} | ⏱️ ${durStr}</span>
+                            <span class="action-name">${action.replace('comando_', '').toUpperCase()}</span>
+                            <span class="action-details">📱 ${countStr}${showDur ? ' | ⏱️ ' + durStr : ''}</span>
                         </div>
                         <div class="link-row">
                             <span class="link-text" onclick="copyToClipboard('${item.link}')">${linkLabel}</span>
+                            <span style="font-size: 9px; color: var(--text-secondary); display: block; margin-top: 2px;">${tipoDesc}</span>
                         </div>
                     </div>
                     <div class="history-actions-row">
