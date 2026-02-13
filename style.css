@@ -168,8 +168,14 @@ label {
 .duration-options {
     display: flex;
     gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.duration-row {
+    display: flex;
+    gap: 8px;
+    width: 100%;
 }
 
 .dur-btn {
