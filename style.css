@@ -189,6 +189,12 @@ label {
     color: var(--accent-cyan);
 }
 
+.dur-btn.btn-vistas.active {
+    background: rgba(0, 230, 118, 0.15);
+    border-color: #00e676;
+    color: #00e676;
+}
+
 .dur-btn:disabled {
     opacity: 0.3;
     pointer-events: none;

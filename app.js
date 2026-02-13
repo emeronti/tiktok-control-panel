@@ -251,7 +251,17 @@ async function loadHistory() {
                 const action = item.accion.toLowerCase();
                 const icon = getActionEmoji(action);
                 const countStr = item.dispositivos ? `${item.dispositivos}C` : '?C';
-                const durStr = item.duracion && item.duracion !== '-' ? item.duracion.replace(' horas', 'H').replace(' hora', 'H').toUpperCase() : '1H';
+                const durRaw = item.duracion || "1 hora";
+                let durStr = durRaw.toLowerCase();
+                if (durStr.includes('hora')) {
+                    durStr = durStr.replace(' horas', 'H').replace(' hora', 'H').toUpperCase();
+                } else if (durStr.includes('vistas') || durStr.includes('vista')) {
+                    durStr = durStr.replace(' vistas', 'V').replace(' vista', 'V').toUpperCase();
+                } else if (durStr === 'indefinido') {
+                    durStr = 'INF';
+                } else {
+                    durStr = durStr.toUpperCase();
+                }
 
                 let tipoDesc = "";
                 let showDur = false;
