@@ -160,7 +160,17 @@ durationBtns.forEach(btn => {
         durationBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         durationInput.value = btn.dataset.val;
+        // Limpiar input manual si se pulsa un botón
+        document.getElementById('custom-vistas').value = '';
     });
+});
+
+// Listener para input manual de vistas
+document.getElementById('custom-vistas').addEventListener('input', (e) => {
+    if (e.target.value) {
+        durationBtns.forEach(b => b.classList.remove('active'));
+        durationInput.value = e.target.value + " Vistas";
+    }
 });
 
 // GENERAR IA (Función Global)
@@ -288,9 +298,25 @@ async function loadHistory() {
 
                 // Formato de copia según pedido (2 líneas) - Link completo
                 const copyLink = item.link.split('?')[0];
-                let copyText = showDur
-                    ? `${copyLink}\n${tipoDesc} - ${countStr} - ${durStr}`
-                    : `${copyLink}\n${tipoDesc} - ${countStr}`;
+
+                function fmt_v(v) {
+                    try {
+                        let num = parseInt(v.split(' ')[0]);
+                        return num.toLocaleString('de-DE'); // Formato con puntos
+                    } catch (e) { return v; }
+                }
+
+                let copyText = "";
+                if (action.includes('granja') && durStr.includes('V')) {
+                    copyText = `${copyLink}\n${fmt_v(item.duracion)} visualizaciones`;
+                } else if (showDur) {
+                    copyText = `${copyLink}\n${tipoDesc} - ${durStr}`;
+                } else {
+                    copyText = `${copyLink}\n${tipoDesc}`;
+                }
+
+                // Codificamos el item para pasarlo a funciones
+                const itemJson = btoa(unescape(encodeURIComponent(JSON.stringify(item))));
 
                 return `
                 <div class="history-item">
@@ -301,13 +327,14 @@ async function loadHistory() {
                             <span class="action-details">📱 ${countStr}${showDur ? ' | ⏱️ ' + durStr : ''}</span>
                         </div>
                         <div class="link-row">
-                            <span class="link-text" onclick="copyToClipboard('${item.link}')">${linkLabel}</span>
+                            <span class="link-text" onclick="copyToClipboard('${copyLink}')">${linkLabel}</span>
                             <span style="font-size: 9px; color: var(--text-secondary); display: block; margin-top: 2px;">${tipoDesc}</span>
                         </div>
                     </div>
                     <div class="history-actions-row">
-                        <button class="btn-copy-mini" onclick="copyToClipboard(\`${copyText}\`)">📋</button>
-                        <button class="btn-copy-mini" style="color: #25D366; border-color: rgba(37, 211, 102, 0.3);" onclick="sendRemoteWhatsapp(decodeURIComponent(\`${encodeURIComponent(copyText)}\`))">📞</button>
+                        <button class="btn-copy-mini" title="Copiar reporte" onclick="copyToClipboard(\`${copyText}\`)">📋</button>
+                        <button class="btn-copy-mini" title="Repetir acción" style="color: #ff8c00; border-color: rgba(255, 140, 0, 0.3);" onclick="repeatTask('${itemJson}')">🔄</button>
+                        <button class="btn-copy-mini" title="Granja 10C / 10k Vistas" style="color: #43a047; border-color: rgba(67, 160, 71, 0.3);" onclick="fastFarm('${itemJson}')">🚜</button>
                         <span class="status-icon" title="${item.estado}">${getStatusIcon(item.estado)}</span>
                     </div>
                 </div>
@@ -318,6 +345,58 @@ async function loadHistory() {
         console.error(e);
     }
 }
+
+// ===== ACCIONES HISTORIAL =====
+window.repeatTask = function (encodedItem) {
+    const item = JSON.parse(decodeURIComponent(escape(atob(encodedItem))));
+    document.getElementById('task-link').value = item.link;
+    document.getElementById('task-action').value = item.accion.toLowerCase();
+    document.getElementById('task-devices').value = item.dispositivos || '10';
+
+    // Disparar cambio de acción para UI
+    taskAction.dispatchEvent(new Event('change'));
+
+    // Duración o Vistas
+    const dur = item.duracion;
+    if (dur.toLowerCase().includes('vistas')) {
+        document.getElementById('custom-vistas').value = dur.split(' ')[0];
+        durationInput.value = dur;
+        durationBtns.forEach(b => b.classList.remove('active'));
+    } else {
+        durationInput.value = dur;
+        document.getElementById('custom-vistas').value = '';
+        durationBtns.forEach(b => {
+            if (b.dataset.val === dur) b.classList.add('active');
+            else b.classList.remove('active');
+        });
+    }
+
+    showStatus('🔄 Datos cargados. Revisa y pulsa ENVIAR.', 'success');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+window.fastFarm = async function (encodedItem) {
+    const item = JSON.parse(decodeURIComponent(escape(atob(encodedItem))));
+    const link = item.link.split('?')[0];
+
+    if (!confirm(`🚜 ¿Lanzar Granja Rápida (10C / 10k Vistas) para este video?`)) return;
+
+    showStatus('🚜 Enviando Granja Rápida...', 'running');
+    try {
+        await postData({
+            link,
+            accion: 'granja',
+            dispositivos: '10',
+            duracion: '10000 Vistas',
+            comentarios: '-',
+            estado: 'Pendiente'
+        });
+        showStatus('✅ Granja Rápida Enviada', 'success');
+        setTimeout(loadHistory, 2000);
+    } catch (e) {
+        showStatus('❌ Error', 'error');
+    }
+};
 
 async function sendRemoteWhatsapp(text) {
     if (!confirm('¿Enviar reporte al grupo desde el PC Servidor?')) return;
